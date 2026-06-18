@@ -9,6 +9,6 @@
     <AssemblyName>BongoCatTracker</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <Resource Include="Assets\*.png" />
+    <EmbeddedResource Include="Assets\*.png" />
   </ItemGroup>
 </Project>

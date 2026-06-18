@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
@@ -89,14 +90,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        Log("Window loaded");
-        SetSprite("cat_idle.png");
-        Topmost = true;
-        Show();
-        Activate();
-
         try
         {
+            Log("Window loaded");
+            SetSprite("cat_idle.png");
+            Topmost = true;
+            Show();
+            Activate();
             _inputHook.Start();
             Log("Hooks started");
         }
@@ -169,8 +169,15 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             return cached;
         }
 
-        var uri = new Uri($"pack://application:,,,/Assets/{fileName}", UriKind.Absolute);
-        var bitmap = new BitmapImage(uri);
+        string resourceName = $"BongoCatTracker.Assets.{fileName}";
+        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName)
+            ?? throw new FileNotFoundException($"Sprite resource not found: {resourceName}");
+
+        var bitmap = new BitmapImage();
+        bitmap.BeginInit();
+        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+        bitmap.StreamSource = stream;
+        bitmap.EndInit();
         bitmap.Freeze();
         _spriteCache[fileName] = bitmap;
         return bitmap;
