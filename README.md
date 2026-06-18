@@ -1,3 +1,5 @@
+![CatTracker banner](ori/banner.png)
+
 # CatTracker
 
 Widget local para Windows inspirado em Bongo Cat. Ele fica sobre a tela, reage a cliques e teclas, mostra contadores visiveis e pode ser fechado pelo `X` da propria imagem ou pelo icone da bandeja.
