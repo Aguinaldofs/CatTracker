@@ -1,0 +1,12 @@
+bin/
+obj/
+**/bin/
+**/obj/
+.vs/
+.vscode/
+*.user
+*.suo
+*.pdb
+*.log
+screen-check.png
+ori-contact-sheet.png

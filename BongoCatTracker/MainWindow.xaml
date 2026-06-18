@@ -1,0 +1,50 @@
+<Window x:Class="BongoCatTracker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bongo Cat Tracker"
+        Width="420"
+        Height="420"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        Closing="Window_Closing">
+  <Grid Background="Transparent">
+    <Image x:Name="CatSprite"
+           Stretch="Uniform"
+           RenderOptions.BitmapScalingMode="HighQuality"
+           SnapsToDevicePixels="True" />
+    <Border HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Margin="0,0,0,18"
+            Padding="14,7"
+            CornerRadius="12"
+            BorderBrush="#29242A"
+            BorderThickness="2"
+            Background="#EFFFFFFF">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Cliques "
+                   FontSize="14"
+                   FontWeight="Bold"
+                   Foreground="#29242A" />
+        <TextBlock Text="{Binding ClicksText}"
+                   FontSize="14"
+                   FontWeight="Black"
+                   Foreground="#29242A" />
+        <TextBlock Text="  Teclas "
+                   FontSize="14"
+                   FontWeight="Bold"
+                   Foreground="#29242A" />
+        <TextBlock Text="{Binding KeysText}"
+                   FontSize="14"
+                   FontWeight="Black"
+                   Foreground="#29242A" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>

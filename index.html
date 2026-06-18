@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bongo Cat Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-label="Bongo Cat Tracker">
+      <section class="stage" aria-label="Gato reativo">
+        <div class="toolbar">
+          <div>
+            <p class="eyebrow">Bongo Cat Tracker</p>
+            <h1>Toque, clique, digite.</h1>
+          </div>
+          <button id="resetButton" class="icon-button" type="button" title="Zerar contadores" aria-label="Zerar contadores">
+            <span aria-hidden="true">R</span>
+          </button>
+        </div>
+
+        <div class="cat-wrap" id="catWrap">
+          <div class="note note-a"></div>
+          <div class="note note-b"></div>
+          <div class="note note-c"></div>
+
+          <div class="cat" aria-hidden="true">
+            <div class="ear left-ear"></div>
+            <div class="ear right-ear"></div>
+            <div class="head">
+              <div class="eye left-eye"></div>
+              <div class="eye right-eye"></div>
+              <div class="mouth"></div>
+              <div class="whisker whisker-left-a"></div>
+              <div class="whisker whisker-left-b"></div>
+              <div class="whisker whisker-right-a"></div>
+              <div class="whisker whisker-right-b"></div>
+            </div>
+            <div class="body"></div>
+            <div class="paw left-paw"></div>
+            <div class="paw right-paw"></div>
+            <div class="keyboard">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="bongo left-bongo"></div>
+            <div class="bongo right-bongo"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel" aria-label="Estatisticas">
+        <div class="metric-grid">
+          <div class="metric">
+            <span class="metric-label">Cliques</span>
+            <strong id="clickCount">0</strong>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Teclas</span>
+            <strong id="keyCount">0</strong>
+          </div>
+          <div class="metric">
+            <span class="metric-label">CPS</span>
+            <strong id="cpsCount">0.0</strong>
+          </div>
+          <div class="metric">
+            <span class="metric-label">KPS</span>
+            <strong id="kpsCount">0.0</strong>
+          </div>
+        </div>
+
+        <div class="live-card">
+          <span class="metric-label">Ultima acao</span>
+          <strong id="lastAction">Nenhuma ainda</strong>
+        </div>
+
+        <div class="keys">
+          <div class="section-title">
+            <h2>Teclas mais usadas</h2>
+            <span id="uniqueKeys">0 unicas</span>
+          </div>
+          <ol id="keyList" class="key-list"></ol>
+        </div>
+      </aside>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
