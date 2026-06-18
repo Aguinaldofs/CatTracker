@@ -3,25 +3,49 @@
 App local para Windows que fica sempre no topo e conta cliques e teclas globalmente.
 A janela principal e um widget transparente com a gatinha; os controles ficam no icone da bandeja.
 
-## Rodar
+## Instalar ou executar
 
-Use o executavel publicado:
+Na raiz do repositorio:
 
 ```powershell
+dotnet publish .\BongoCatTracker\BongoCatTracker.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
+.\BongoCatTracker\bin\Release\net8.0-windows\win-x64\publish\BongoCatTracker.exe
+```
+
+Dentro desta pasta:
+
+```powershell
+dotnet publish .\BongoCatTracker.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
 .\bin\Release\net8.0-windows\win-x64\publish\BongoCatTracker.exe
 ```
 
-Ou rode em modo desenvolvimento:
+Modo desenvolvimento:
 
 ```powershell
 dotnet run --project .\BongoCatTracker.csproj
 ```
 
+## Requisitos
+
+- Windows.
+- .NET 8 SDK para compilar.
+- .NET Desktop Runtime 8 para executar a build dependente de runtime.
+
 ## Uso
 
 - Arraste a gatinha para mover o widget.
+- Clique no `X` da imagem para fechar.
 - Use o menu do icone da bandeja para mostrar, pausar, zerar ou sair.
 - A gatinha troca de sprite quando recebe clique ou tecla.
+
+## Dependencias
+
+- .NET 8.
+- WPF para a janela transparente.
+- Windows Forms apenas para o icone de bandeja.
+- `System.Text.Json` para salvar contadores.
+- APIs nativas `user32.dll` e `kernel32.dll` para hooks globais.
+- Python + Pillow apenas no script de desenvolvimento `tools/prepare_assets.py`.
 
 ## Privacidade
 
@@ -34,6 +58,14 @@ Os dados ficam em:
 ```
 
 Veja tambem `PRIVACY.md`.
+
+## Arquivos para auditar
+
+- `NativeInputHook.cs`: hooks globais de mouse/teclado.
+- `MainWindow.xaml.cs`: incrementa contadores e controla a UI.
+- `StatsStore.cs`: leitura/escrita do arquivo local.
+- `InputStats.cs`: campos persistidos.
+- `BongoCatTracker.csproj`: dependencias e assets.
 
 ## Publicar
 
