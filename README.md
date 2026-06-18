@@ -4,7 +4,14 @@ Widget local para Windows inspirado em Bongo Cat. Ele fica sobre a tela, reage a
 
 ## Instalar ou executar
 
-### Opcao 1: baixar e executar uma build local
+### Opcao 1: baixar pronto
+
+Baixe um destes arquivos na pasta `releases/`:
+
+- [`CatTracker.exe`](releases/CatTracker.exe): arquivo unico pequeno. Requer .NET Desktop Runtime 8 instalado.
+- [`CatTracker-win-x64-self-contained.zip`](releases/CatTracker-win-x64-self-contained.zip): pacote maior com o runtime necessario. Extraia o `.zip` e execute `BongoCatTracker.exe`.
+
+### Opcao 2: compilar localmente
 
 Clone o repositorio:
 
@@ -25,7 +32,7 @@ Execute:
 .\BongoCatTracker\bin\Release\net8.0-windows\win-x64\publish\BongoCatTracker.exe
 ```
 
-### Opcao 2: rodar em modo desenvolvimento
+### Opcao 3: rodar em modo desenvolvimento
 
 ```powershell
 dotnet run --project .\BongoCatTracker\BongoCatTracker.csproj
@@ -43,6 +50,7 @@ dotnet run --project .\BongoCatTracker\BongoCatTracker.csproj
 - Clique no `X` da imagem para fechar.
 - Use o icone da bandeja para mostrar, pausar/retomar, zerar ou sair.
 - O contador visivel mostra apenas totais de `Cliques` e `Teclas`.
+- Os olhos mudam de cor em intervalos aleatorios: verde, amarelo, amarelo-esverdeado ou um olho de cada cor.
 
 ## Dependencias e APIs usadas
 

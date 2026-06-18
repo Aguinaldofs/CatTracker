@@ -10,3 +10,5 @@ obj/
 *.log
 screen-check.png
 ori-contact-sheet.png
+BongoCatTracker/dist/
+BongoCatTracker/dist-framework/

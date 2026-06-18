@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -17,10 +18,15 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private readonly DispatcherTimer _rateTimer;
     private readonly DispatcherTimer _saveTimer;
     private readonly DispatcherTimer _spriteTimer;
+    private readonly DispatcherTimer _eyeTimer;
     private readonly Queue<DateTimeOffset> _clickTimes = new();
     private readonly Queue<DateTimeOffset> _keyTimes = new();
+    private readonly Random _random = new();
+    private readonly Dictionary<string, BitmapSource> _spriteCache = new();
     private bool _paused;
     private bool _reallyClose;
+    private string _currentSprite = "cat_idle.png";
+    private EyePair _currentEyes = EyePair.Green;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -63,6 +69,10 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             _spriteTimer.Stop();
             SetSprite("cat_idle.png");
         };
+
+        _eyeTimer = new DispatcherTimer();
+        _eyeTimer.Tick += (_, _) => RandomizeEyes();
+        ScheduleNextEyeChange();
 
         RefreshCounters();
     }
@@ -143,13 +153,134 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void SetSprite(string fileName)
     {
-        string spritePath = Path.Combine(AppContext.BaseDirectory, "Assets", fileName);
-        CatSprite.Source = new BitmapImage(new Uri(spritePath, UriKind.Absolute));
+        _currentSprite = fileName;
+        CatSprite.Source = BuildEyeVariant(GetSprite(fileName), _currentEyes);
         if (fileName != "cat_idle.png")
         {
             _spriteTimer.Stop();
             _spriteTimer.Start();
         }
+    }
+
+    private BitmapSource GetSprite(string fileName)
+    {
+        if (_spriteCache.TryGetValue(fileName, out BitmapSource? cached))
+        {
+            return cached;
+        }
+
+        var uri = new Uri($"pack://application:,,,/Assets/{fileName}", UriKind.Absolute);
+        var bitmap = new BitmapImage(uri);
+        bitmap.Freeze();
+        _spriteCache[fileName] = bitmap;
+        return bitmap;
+    }
+
+    private void RandomizeEyes()
+    {
+        EyePair[] variants =
+        [
+            EyePair.Green,
+            new(EyeColor.Yellow, EyeColor.Green),
+            new(EyeColor.Green, EyeColor.Yellow),
+            new(EyeColor.Yellow, EyeColor.Yellow),
+            new(EyeColor.YellowGreen, EyeColor.Yellow),
+            new(EyeColor.Yellow, EyeColor.YellowGreen),
+        ];
+
+        _currentEyes = variants[_random.Next(variants.Length)];
+        CatSprite.Source = BuildEyeVariant(GetSprite(_currentSprite), _currentEyes);
+        ScheduleNextEyeChange();
+    }
+
+    private void ScheduleNextEyeChange()
+    {
+        _eyeTimer.Interval = TimeSpan.FromMilliseconds(_random.Next(900, 3400));
+        _eyeTimer.Start();
+    }
+
+    private static BitmapSource BuildEyeVariant(BitmapSource source, EyePair eyes)
+    {
+        if (eyes == EyePair.Green)
+        {
+            return source;
+        }
+
+        BitmapSource bitmap = source.Format == PixelFormats.Bgra32
+            ? source
+            : new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
+
+        int width = bitmap.PixelWidth;
+        int height = bitmap.PixelHeight;
+        int stride = width * 4;
+        byte[] pixels = new byte[stride * height];
+        bitmap.CopyPixels(pixels, stride, 0);
+
+        for (int y = 0; y < height; y++)
+        {
+            double ny = y / (double)height;
+            if (ny < 0.30 || ny > 0.58)
+            {
+                continue;
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                double nx = x / (double)width;
+                bool leftEye = nx is > 0.30 and < 0.48;
+                bool rightEye = nx is > 0.50 and < 0.71;
+                if (!leftEye && !rightEye)
+                {
+                    continue;
+                }
+
+                int offset = y * stride + x * 4;
+                byte b = pixels[offset];
+                byte g = pixels[offset + 1];
+                byte r = pixels[offset + 2];
+                byte a = pixels[offset + 3];
+                if (a < 16 || !IsGreenEyePixel(r, g, b))
+                {
+                    continue;
+                }
+
+                EyeColor target = leftEye ? eyes.Left : eyes.Right;
+                if (target == EyeColor.Green)
+                {
+                    continue;
+                }
+
+                (byte nr, byte ng, byte nb) = RecolorEyePixel(r, g, b, target);
+                pixels[offset] = nb;
+                pixels[offset + 1] = ng;
+                pixels[offset + 2] = nr;
+            }
+        }
+
+        var output = BitmapSource.Create(width, height, bitmap.DpiX, bitmap.DpiY, PixelFormats.Bgra32, null, pixels, stride);
+        output.Freeze();
+        return output;
+    }
+
+    private static bool IsGreenEyePixel(byte r, byte g, byte b)
+    {
+        return g > 95 && g > r + 18 && g > b + 16 && r is >= 55 and <= 190 && b <= 130;
+    }
+
+    private static (byte R, byte G, byte B) RecolorEyePixel(byte r, byte g, byte b, EyeColor target)
+    {
+        double shade = Math.Clamp(g / 170.0, 0.45, 1.45);
+        (double tr, double tg, double tb) = target switch
+        {
+            EyeColor.Yellow => (238, 211, 62),
+            EyeColor.YellowGreen => (196, 220, 75),
+            _ => (r, g, b)
+        };
+
+        byte nr = (byte)Math.Clamp((tr * shade + r * 0.20) / 1.20, 0, 255);
+        byte ng = (byte)Math.Clamp((tg * shade + g * 0.20) / 1.20, 0, 255);
+        byte nb = (byte)Math.Clamp((tb * shade + b * 0.20) / 1.20, 0, 255);
+        return (nr, ng, nb);
     }
 
     private void UpdateRates()
@@ -269,6 +400,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
 
         SaveNow();
+        _eyeTimer.Stop();
         _inputHook.Dispose();
         _notifyIcon.Visible = false;
         _notifyIcon.Dispose();
@@ -294,4 +426,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             // Logging should never affect the widget.
         }
     }
+}
+
+public enum EyeColor
+{
+    Green,
+    Yellow,
+    YellowGreen
+}
+
+public readonly record struct EyePair(EyeColor Left, EyeColor Right)
+{
+    public static EyePair Green { get; } = new(EyeColor.Green, EyeColor.Green);
 }

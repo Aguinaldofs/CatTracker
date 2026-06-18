@@ -9,8 +9,6 @@
     <AssemblyName>BongoCatTracker</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Assets\*.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Assets\*.png" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,11 @@ A janela principal e um widget transparente com a gatinha; os controles ficam no
 
 ## Instalar ou executar
 
+Build pronta na raiz do repositorio:
+
+- `releases/CatTracker.exe`: arquivo unico pequeno. Requer .NET Desktop Runtime 8 instalado.
+- `releases/CatTracker-win-x64-self-contained.zip`: pacote maior com runtime incluido.
+
 Na raiz do repositorio:
 
 ```powershell
@@ -37,6 +42,7 @@ dotnet run --project .\BongoCatTracker.csproj
 - Clique no `X` da imagem para fechar.
 - Use o menu do icone da bandeja para mostrar, pausar, zerar ou sair.
 - A gatinha troca de sprite quando recebe clique ou tecla.
+- Os olhos mudam de cor em intervalos aleatorios.
 
 ## Dependencias
 
